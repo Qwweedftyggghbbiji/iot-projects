@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="iot.cloud.platform.lock.mapper.ConfigMapper">
+    <select id="getConfigByK" resultType="iot.cloud.platform.lock.entity.ConfigEntity">
+        SELECT
+        `k`,
+        `v`,
+        `upt_time` AS uptTime
+        FROM `config`
+        WHERE `k` = #{k}
+        LIMIT 1
+    </select>
+</mapper>

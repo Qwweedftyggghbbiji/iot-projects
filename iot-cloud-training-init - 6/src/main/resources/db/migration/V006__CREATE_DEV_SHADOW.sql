@@ -1,0 +1,27 @@
+CREATE TABLE `dev_shadow_desire` (
+	`id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '表自增ID' ,
+	`iot_id` VARCHAR(32) NOT NULL COMMENT '物联网设备ID' ,
+	`state` JSON  DEFAULT NULL COMMENT '状态',
+	`metadata`  JSON  DEFAULT NULL  COMMENT '元数据',
+	`upt_time` DATETIME NOT NULL COMMENT '更新时间',
+	PRIMARY KEY (`id`) USING BTREE
+)
+COMMENT='期望设备影子'
+COLLATE='utf8mb4_general_ci'
+ENGINE=InnoDB
+ROW_FORMAT=DYNAMIC
+;
+
+CREATE TABLE `dev_shadow_reported` (
+	`id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '表自增ID' ,
+	`iot_id` VARCHAR(32) NOT NULL COMMENT '物联网设备ID' ,
+	`state` JSON  DEFAULT NULL COMMENT '状态',
+	`metadata`  JSON  DEFAULT NULL  COMMENT '元数据',
+	`upt_time` DATETIME NOT NULL COMMENT '更新时间',
+	PRIMARY KEY (`id`) USING BTREE
+)
+COMMENT='报告设备影子'
+COLLATE='utf8mb4_general_ci'
+ENGINE=InnoDB
+ROW_FORMAT=DYNAMIC
+;

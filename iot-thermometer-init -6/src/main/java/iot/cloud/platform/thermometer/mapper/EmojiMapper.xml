@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="iot.cloud.platform.thermometer.mapper.EmojiMapper">
+    <update id="updateEmojiFace">
+        UPDATE emoji
+        SET face = #{face}, upt_time = NOW()
+        WHERE name = #{name}
+    </update>
+</mapper>

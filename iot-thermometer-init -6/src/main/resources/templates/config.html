@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>表情温度计配置</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css">
+    <script src="static/js/bootstrap.bundle.min.js"></script>
+    <script src="static/js/jquery-3.6.0.min.js"></script>
+    <script src="static/js/iot-commons.js"></script>
+</head>
+<body>
+<%  include("fragment/topmenu.html"){} %>
+<div class="container">
+    <div id="msgPanel" style="position:fixed;right:1rem;width:30%;">
+    </div>
+    <main style="margin-top:2rem;">
+        <h2>通用配置</h2><hr/>
+        <div class="mb-3 row">
+            <label for="devName">设备名称</label>
+            <input type="text" class="form-control" id="devName" placeholder="" value="${devName}">
+        </div>
+        <div class="mb-3 row">
+            <label for="devType">设备类型</label>
+            <input type="text" class="form-control" id="devType" placeholder="" value="${devType}">
+        </div>
+        <div class="mb-3 row">
+            <label for="description">设备描述</label>
+            <input type="text" class="form-control" id="description" placeholder="" value="${description}">
+        </div>
+        <div class="mb-3 row">
+            <label for="iotId">物联网云平台 ID</label>
+            <input type="text" class="form-control" id="iotId" aria-describedby="物联网云平台 ID"
+                   placeholder="" value="${iotId}">
+        </div>
+        <div class="mb-3 row">
+            <label for="devSecret">设备密钥</label>
+            <input type="text" class="form-control" id="devSecret" placeholder="" value="${devSecret}">
+        </div>
+        <div class="mb-3 row">
+            <label for="token">用户令牌</label>
+            <input type="text" class="form-control" id="token" placeholder="" value="${token}">
+        </div>
+        <div class="mb-3 row">
+            <label for="userId">用户ID</label>
+            <input type="text" class="form-control" id="userId" placeholder="" value="${userId}">
+        </div>
+        <div class="mb-3 row">
+            <label for="userSecret">用户密钥</label>
+            <input type="text" class="form-control" id="userSecret" placeholder="" value="${userSecret}">
+        </div>
+        <h2>MQTT 主题配置</h2><hr/>
+        <div class="mb-3 row">
+            <label for="devTopicPost">设备主动推送主题</label>
+            <input type="text" class="form-control" id="devTopicPost"  placeholder="" value="${devTopicPost}" readonly>
+        </div>
+        <div class="mb-3 row">
+            <label for="devTopicPostReply">设备主动推送回复主题</label>
+            <input type="text" class="form-control" id="devTopicPostReply" placeholder="" value="${devTopicPostReply}" readonly>
+        </div>
+        <div class="mb-3 row">
+            <label for="devTopicReceive">设备被动接收主题</label>
+            <input type="text" class="form-control" id="devTopicReceive" placeholder="" value="${devTopicReceive}" readonly>
+        </div>
+        <div class="mb-3 row">
+            <label for="devTopicReceiveReply">设备被动接收回复主题</label>
+            <input type="text" class="form-control" id="devTopicReceiveReply" placeholder="" value="${devTopicReceiveReply}" readonly>
+        </div>
+        <div>
+            <button type="button" id="saveBtn" class="btn btn-primary">保存</button>
+            <button type="button" id="getTokenBtn" class="btn btn btn-secondary">获取用户令牌</button>
+            <button type="button" id="registerBtn" class="btn btn btn-secondary">注册设备</button>
+        </div>
+    </main>
+</div>
+<script>
+function checkBlank(expArr){
+  for(i=0;i<expArr.length;i++){
+    if($(expArr[i]).val()===""){
+       $(expArr[i]).addClass("is-invalid");
+       return false;
+    }else{
+       $(expArr[i]).removeClass("is-invalid");
+    }
+  }
+  return true;
+}
+
+    $(function() {
+        $("#iotId").focus();
+
+        // 页面加载时自动获取用户令牌
+        $.ajax({
+            url: "http://localhost:8100/getUserToken",
+            type: "get",
+            dataType: "json",
+            success: function(result) {
+              if(result.errcode=='0' && result.data && result.data.token){
+                $("#token").val(result.data.token);
+                // 隐藏"方法没实现"提示（如果存在）
+                $("#token").next('.text-muted').hide();
+              }
+            }
+        });
+		$("#saveBtn").click(function() {
+		   var form={};
+           $(".form-control").each(function(idx,ele){
+             form[$(ele).attr("id")]=$(ele).val();
+           });
+             $.ajax({
+				url: "http://localhost:8100/saveConfig",
+				contentType: "application/json",
+                type: "post",
+                data: JSON.stringify(form),
+                dataType: "json",
+					success: function(result) {
+					  if(result.errcode=='0'){
+						showMsg(result.errmsg,'success');
+					  }else{
+					    showMsg(result.errmsg,'danger');
+					  }
+					},
+					error: function() {
+						showMsg("系统异常",'danger');
+					}
+			 });
+
+		});
+
+		$("#getTokenBtn").click(function() {
+		   let userSecret=$('#userSecret').val();
+		   let userId=$('#userId').val();
+		   if(checkBlank(["#userSecret","#userId"])){
+           $.ajax({
+				url: "http://localhost:8100/getToken",
+				contentType: "application/json",
+                type: "post",
+                data: JSON.stringify({
+                    "userSecret": userSecret,
+                    "userId":userId
+                }),
+                dataType: "json",
+				success: function(result) {
+				  if(result.errcode=='0'){
+				    $("#token").val(result.data.token);
+					showMsg(result.errmsg,'success');
+				  }else{
+				    showMsg(result.errmsg,'danger');
+				  }
+				},
+				error: function() {
+					showMsg("系统异常",'danger');
+				}
+				});
+		   }else{
+			  showMsg("用户ID，用户密钥不能为空",'danger');
+		   }
+		});
+
+		$("#registerBtn").click(function() {
+		   let devName=$('#devName').val();
+		   let iotId=$('#iotId').val();
+		   let devType=$('#devType').val();
+		   let description=$('#description').val();
+		   let token=$('#token').val();
+		   if(checkBlank(["#devName","#devType","#token"])){
+           $.ajax({
+				url: "http://localhost:8100/registerDevice",
+				contentType: "application/json",
+                type: "post",
+                data: JSON.stringify({
+                    "iotId":iotId,
+                    "devName": devName,
+                    "devType": devType,
+                    "description":description,
+                    "token":token
+                }),
+                dataType: "json",
+				success: function(result) {
+				  if(result.errcode=='0'){
+				    $("#iotId").val(result.data.iotId);
+				    $("#devSecret").val(result.data.devSecret);
+				    $("#devTopicPost").val(result.data.devTopicPost);
+				    $("#devTopicPostReply").val(result.data.devTopicPostReply);
+				    $("#devTopicReceive").val(result.data.devTopicReceive);
+				    $("#devTopicReceiveReply").val(result.data.devTopicReceiveReply);
+					showMsg(result.errmsg,'success');
+				  }else{
+				    showMsg(result.errmsg,'danger');
+				  }
+				},
+				error: function() {
+					showMsg("系统异常",'danger');
+				}
+		   });
+		   }else{
+		     showMsg("设备名称，设备类型，令牌不能为空",'danger');
+		   }
+		});
+	});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="iot.cloud.platform.thermometer.mapper.TempEmojiMapper">
+    <select id="getFaceByTemp" resultType="iot.cloud.platform.thermometer.entity.TempEmoji">
+        SELECT * FROM tempemoji
+        WHERE
+        <![CDATA[
+        (mint IS NULL AND maxt > #{temp})
+        OR (mint <= #{temp} AND maxt > #{temp})
+        OR (mint <= #{temp} AND maxt IS NULL)
+    ]]>
+        LIMIT 1
+    </select>
+</mapper>

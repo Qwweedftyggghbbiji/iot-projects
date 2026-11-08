@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能锁 - 解锁</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Microsoft Yahei", Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .lock-box {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .lock-title {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .pwd-input {
+            width: 240px;
+            height: 50px;
+            font-size: 28px;
+            text-align: center;
+            letter-spacing: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            outline: none;
+        }
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 70px);
+            gap: 10px;
+            margin: 0 auto 20px;
+        }
+        .key-btn {
+            width: 70px;
+            height: 70px;
+            font-size: 24px;
+            border: none;
+            border-radius: 5px;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .key-btn:hover {
+            background-color: #e0e0e0;
+        }
+        .unlock-btn {
+            width: 240px;
+            height: 50px;
+            font-size: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .unlock-btn:hover {
+            background-color: #45a049;
+        }
+        .result-msg {
+            margin-top: 20px;
+            font-size: 18px;
+            height: 24px;
+        }
+        .success {
+            color: #4CAF50;
+        }
+        .error {
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+<div class="lock-box">
+    <h2 class="lock-title">智能锁(设备ID: <span id="deviceId">加载中...</span>)</h2>
+    <input type="text" class="pwd-input" id="pwdInput" readonly>
+    <div class="keypad">
+        <button class="key-btn" onclick="addPwd('1')">1</button>
+        <button class="key-btn" onclick="addPwd('2')">2</button>
+        <button class="key-btn" onclick="addPwd('3')">3</button>
+        <button class="key-btn" onclick="addPwd('4')">4</button>
+        <button class="key-btn" onclick="addPwd('5')">5</button>
+        <button class="key-btn" onclick="addPwd('6')">6</button>
+        <button class="key-btn" onclick="addPwd('7')">7</button>
+        <button class="key-btn" onclick="addPwd('8')">8</button>
+        <button class="key-btn" onclick="addPwd('9')">9</button>
+        <button class="key-btn" onclick="clearPwd()">清除</button>
+        <button class="key-btn" onclick="addPwd('0')">0</button>
+        <button class="key-btn" onclick="deletePwd()">删除</button>
+    </div>
+    <button class="unlock-btn" onclick="unlock()">解锁</button>
+    <div class="result-msg" id="resultMsg"></div>
+</div>
+
+<script>
+    // 页面加载完成后自动获取设备ID
+    window.onload = function() {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '/api/deviceId', true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                document.getElementById('deviceId').innerText = xhr.responseText;
+            }
+        };
+        xhr.send();
+    }
+
+    // 输入密码（数字键盘点击事件）
+    function addPwd(num) {
+        const input = document.getElementById('pwdInput');
+        if (input.value.length < 18) {
+            input.value += num;
+        }
+    }
+
+    // 删除最后一位密码
+    function deletePwd() {
+        const input = document.getElementById('pwdInput');
+        input.value = input.value.slice(0, -1);
+    }
+
+    // 清空密码
+    function clearPwd() {
+        document.getElementById('pwdInput').value = '';
+        document.getElementById('resultMsg').innerText = '';
+    }
+
+    // 解锁请求（调用后端接口）
+    function unlock() {
+        const pwd = document.getElementById('pwdInput').value;
+        const resultMsg = document.getElementById('resultMsg');
+
+        // 发送POST请求到后端
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/unlock', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                const res = JSON.parse(xhr.responseText);
+                resultMsg.innerText = res.msg;
+                resultMsg.className = res.code === 0 ? 'result-msg success' : 'result-msg error';
+            }
+        };
+        xhr.send('pwd=' + encodeURIComponent(pwd));
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>编辑设备</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <script src="/static/js/iot-cloud.js"></script>
+</head>
+<body>
+<%  include("fragment/topmenu.html"){} %>
+<div class="container">
+    <h1>设备${dev.devName}</h1>
+    <div id="msgPanel" style="position:fixed;right:1rem;width:30%;">
+    </div>
+    <div>
+     <form>
+         <div class="mb-3">
+             <label for="iotId" class="form-label">平台ID（IoT ID)</label>
+             <input value="${dev.iotId}" type="text" class="form-control" id="iotId" readonly />
+         </div>
+         <div class="mb-3">
+             <label for="devName" class="form-label">名称</label>
+             <input value="${dev.devName}" type="text" class="form-control" id="devName" />
+         </div>
+         <div class="mb-3">
+             <label for="devType" class="form-label">类型</label>
+             <select class="form-control" id="devType">
+                 <option value="lock" ${'lock'==dev.devType?'selected':''}>智能锁</option>
+                 <option value="thermometer"  ${'thermometer'==dev.devType?'selected':''} >温度计</option>
+                 <option value="bulb" ${'bulb'==dev.devType?'selected':''} >智能灯</option>
+             </select>
+         </div>
+         <div class="mb-3">
+             <label for="description" class="form-label">描述</label>
+             <textarea class="form-control" id="description"  rows="3">${dev.description !}</textarea>
+         </div>
+         <div class="mb-3">
+             <label for="status" class="form-label">状态</label>
+             <select class="form-control" id="status">
+                 <option value="enabled" ${'enabled'==dev.status?'selected':''} >启用</option>
+                 <option value="disabled" ${'disabled'==dev.status?'selected':''} >禁用</option>
+             </select>
+         </div>
+         <div class="mb-3">
+             <label for="devSecret" class="form-label">密钥</label>
+             <input value="${dev.devSecret !}" type="text" class="form-control" id="devSecret" readonly />
+         </div>
+         <div class="mb-3">
+             <label for="createTime" class="form-label">创建时间</label>
+             <input value="${dev.createTime,dateFormat='yyyy-MM-dd HH:mm'}" type="text" class="form-control" id="createTime" readonly />
+         </div>
+         <div style="display:inline">
+             <button type="button" id="modBtn" class="btn btn-primary">修改</button>
+             <a href="/device_list" class="btn btn-primary">返回列表</a>
+         </div>
+     </form>
+    </div>
+</div>
+<script>
+    $(function() {
+        $("#devName").focus();
+		$("#modBtn").click(function() {
+		   let devName=$('#devName').val();
+		   let iotId=$('#iotId').val();
+		   let devType=$('#devType').val();
+		   let description=$('#description').val();
+		   let status=$('#status option:selected').val();
+		   if(devName==""||devType==""){
+              showMsg("设备名和设备类型均不能为空",'danger');
+		   }else{
+           $.ajax({
+                url: "http://localhost:8098/device_update",
+                contentType: "application/json",
+                type: "post",
+                data: JSON.stringify({
+                    "devName":devName,
+                    "iotId":iotId,
+                    "devType": devType,
+                    "description": description,
+                    "status": status,
+                }),
+                dataType: "json",
+                success: function(result) {
+                  if(result.errcode=='0'){
+                    showMsg(result.errmsg,'success');
+                    window.location.href = result.data.url;
+                  }else{
+                    showMsg(result.errmsg,'danger');
+                  }
+                },
+                error: function() {
+                    showMsg("系统异常",'danger');
+                }
+            });
+            }
+		});
+	});
+</script>
+</body>
+</html>

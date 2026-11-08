@@ -1,0 +1,31 @@
+beetl:
+  templates-path: templates
+mqtt:
+  host: tcp://localhost:1883
+  username:
+  password:
+  qos: 1
+  client-id: thermometer001
+  topic:
+    post: /iot/cloud/devices/post
+    post_reply: /iot/cloud/devices/post_reply
+    receive: /iot/cloud/devices/receive
+    receive_reply: /iot/cloud/devices/receive_reply
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:iot/cloud/platform/thermometer/mapper/*Mapper.xml
+  type-aliases-package: iot.cloud.platform.thermometer.domain.*
+server:
+  port: 8100
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/iotthermo?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true
+    username: iotthermo
+    password: dpLJnVgnq@v7
+# 对接云平台接口配置
+cloud:
+  platform:
+    base-url: http://localhost:8098
+    user-id: zhangsan
+    secret: 123456

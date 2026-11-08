@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+# 设备端配置
+device:
+  user:
+    id: zhangsan
+    secret: "123456"
+
+# 云平台地址（设备端作为HTTP客户端调用此地址）
+cloud:
+  platform:
+    url: http://localhost:8098
+
+logging:
+  level:
+    iot.cloud.device: INFO

@@ -1,0 +1,35 @@
+# Compiled output
+target/
+build/
+out/
+*.jar
+*.war
+*.ear
+
+# Logs
+logs/
+*.log
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Maven
+dependency-reduced-pom.xml
+
+# Node
+node_modules/
+
+# Temporary
+*.tmp
+*.bak

@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>物联网云平台 - 登录</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css">
+    <script src="static/js/bootstrap.bundle.min.js"></script>
+    <script src="static/js/jquery-3.6.0.min.js"></script>
+    <script src="static/js/iot-cloud.js"></script>
+</head>
+<body>
+<%  include("fragment/topmenu.html"){} %>
+<div class="container">
+<h1>物联网云平台 - 登录</h1>
+    <div id="msgPanel" style="position:fixed;right:1rem;width:30%;">
+    </div>
+<form action="/signin">
+    <div class="mb-3">
+        <label for="username" class="form-label">用户名</label>
+        <input type="text" class="form-control" id="username" name="username"/>
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">密码</label>
+        <input type="password" class="form-control" id="password" name="password"/>
+    </div>
+    <button type="button" id="loginBtn" class="btn btn-primary">登录</button>
+</form>
+</div>
+<script>
+    $(function() {
+        $("#username").focus();
+		$("#loginBtn").click(function() {
+		   let password=$('#password').val();
+		   let username=$('#username').val();
+		   if(password==""||username==""){
+              showMsg("用户名和密码均不能为空",'danger');
+		   }else{
+           $.ajax({
+                url: "http://localhost:8098/signin",
+                contentType: "application/json",
+                type: "post",
+                data: JSON.stringify({
+                    "username":username,
+                    "password": password,
+                }),
+                dataType: "json",
+                success: function(result) {
+                  if(result.errcode=='0'){
+                    showMsg(result.errmsg,'success');
+                    window.location.href = result.data.url;
+                  }else{
+                    showMsg(result.errmsg,'danger');
+                  }
+                },
+                error: function() {
+                    showMsg("系统异常",'danger');
+                }
+            });
+            }
+		});
+	});
+</script>
+</body>
+</html>

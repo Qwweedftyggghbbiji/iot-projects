@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="iot.cloud.platform.cloud.mapper.DeviceMsgMapper">
+    <select id="getByTag" resultType="iot.cloud.platform.cloud.entity.DeviceMsgEntity">
+        SELECT id, iot_id as iotId, tag, msg, create_time as createTime
+        FROM device_msg
+        WHERE iot_id = #{iotId} AND tag = #{tag}
+        ORDER BY create_time DESC
+    </select>
+    <insert id="save" parameterType="iot.cloud.platform.cloud.entity.DeviceMsgEntity">
+        INSERT INTO device_msg (iot_id, tag, msg, create_time)
+        VALUES (#{iotId}, #{tag}, #{msg}, #{createTime})
+    </insert>
+</mapper>

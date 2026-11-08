@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="iot.cloud.platform.cloud.mapper.TokenMapper">
+
+    <!-- 根据用户ID查询Token信息 -->
+    <select id="getTokenByUserId" resultType="iot.cloud.platform.cloud.entity.TokenEntity">
+        SELECT token, expired_ts AS expiredTs
+        FROM token
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 根据Token字符串查询Token信息 (用于验证Token有效性) -->
+    <select id="getToken" resultType="iot.cloud.platform.cloud.entity.TokenEntity">
+        SELECT token, expired_ts AS expiredTs
+        FROM token
+        WHERE token = #{token}
+    </select>
+
+    <!-- 保存新的Token记录 -->
+    <insert id="saveToken" parameterType="iot.cloud.platform.cloud.entity.TokenEntity">
+        INSERT INTO token (user_id, token, expired_ts, expired_time)
+        VALUES (#{userId}, #{token}, #{expiredTs},  #{expiredTime})
+    </insert>
+
+    <!-- 更新Token信息 (通常用于刷新过期时间或Token值) -->
+    <update id="updateToken" parameterType="iot.cloud.platform.cloud.entity.TokenEntity">
+        UPDATE token
+        SET token = #{token}, expired_ts = #{expiredTs}, expired_time=#{expiredTime}
+        WHERE user_id = #{userId}
+    </update>
+
+</mapper>

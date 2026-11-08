@@ -1,0 +1,14 @@
+CREATE TABLE `user` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '自增id' ,
+	`user_id` VARCHAR(32) NOT NULL COMMENT '用户ID' ,
+	`pwd` VARCHAR(32) NOT NULL COMMENT '设备名称' ,
+	`user_name` VARCHAR(64) NOT NULL COMMENT '用户姓名' ,
+	`user_secret` VARCHAR(128) NOT NULL COMMENT '用户密钥' ,
+	PRIMARY KEY (`id`) USING BTREE,
+	UNIQUE KEY (`user_id`) USING BTREE
+)
+COMMENT='用户'
+COLLATE='utf8mb4_general_ci'
+ENGINE=InnoDB
+ROW_FORMAT=DYNAMIC
+;

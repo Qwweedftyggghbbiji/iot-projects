@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>我的设备列表</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css">
+    <script src="static/js/bootstrap.bundle.min.js"></script>
+    <script src="static/js/jquery-3.6.0.min.js"></script>
+    <script src="static/js/iot-cloud.js"></script>
+</head>
+<body>
+<%  include("fragment/topmenu.html"){} %>
+<div class="container">
+    <h1>我的设备列表</h1>
+    <div id="msgPanel" style="position:fixed;right:1rem;width:30%;">
+    </div>
+    <div>
+        <a href="/device_new" class="btn btn-primary">新增设备</a>
+    </div>
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">设备名称</th>
+                <th scope="col">IoT ID</th>
+                <th scope="col">类型</th>
+                <th scope="col">状态</th>
+                <th scope="col">设备密钥</th>
+                <th scope="col">创建时间</th>
+                <th scope="col">描述</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for (dev in devList) { %>
+            <tr>
+                <th>${devLP.index}</th>
+                <td><a href="/device/${dev.iotId}"/>${dev.devName !}</td>
+                <td>${dev.iotId !}</td>
+                <td>
+                    <% select(dev.devType){ %>
+                    <%  case "lock": %>
+                    智能锁</span>
+                    <%  case "thermometer":%>
+                    温度计
+                    <%  case "bulb":%>
+                    智能灯
+                    <% } %>
+                </td>
+                <td>
+                    <% select(dev.status){ %>
+                    <%  case "enabled": %>
+                    启用
+                    <%  case "disabled":%>
+                    禁用
+                    <% } %>
+                </td>
+                <td>${dev.devSecret !}</td>
+                <td>${dev.createTime,dateFormat="yyyy-MM-dd HH:mm"}</td>
+                <td>${dev.description !}</td>
+            </tr>
+            <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+</script>
+</body>
+</html>

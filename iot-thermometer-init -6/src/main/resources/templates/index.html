@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>表情温度计</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css">
+    <script src="static/js/bootstrap.bundle.min.js"></script>
+    <script src="static/js/jquery-3.6.0.min.js"></script>
+    <script src="static/js/iot-commons.js"></script>
+</head>
+<body>
+<%  include("fragment/topmenu.html"){} %>
+<div class="container">
+    <div id="msgPanel" style="position:fixed;right:1rem;width:30%;">
+    </div>
+    <main style="margin-top:2rem;">
+        <div style="text-align:center;margin:0 auto;font-size:3rem;">
+            <p>当前温度：<span id="tempctn">--</span>℃</p>
+            <p><span id="emojictn"></span></p>
+        </div>
+        <div class="mb-3" style="text-align:center">
+            <button type="button" id="sendBtn" class="btn btn-primary">发送温度消息</button>
+        </div>
+        <div class="mb-3">
+            <label for="temp" class="form-label">温度</label>
+            <input type="number" min="-273" max="120" step="1" class="form-control" id="temp" name="temp"/>
+        </div>
+        <p>
+            <button type="button" id="updateBtn" class="btn btn-primary">更新温度</button>
+        </p>
+    </main>
+</div>
+<script>
+    $(function() {
+        $("#temp").focus();
+		$("#updateBtn").click(function() {
+		   let temp=$('#temp').val();
+		   if(temp==""){
+              showMsg("温度不能为空",'danger');
+		   }else{
+           $.ajax({
+				url: "http://localhost:8100/showTempEmoji?temp="+temp,
+				contentType: "application/json",
+				type: "post",
+					success: function(result) {
+					  if(result.errcode=='0'){
+						showMsg(result.errmsg,'success');
+					  }else{
+					    showMsg(result.errmsg,'danger');
+					  }
+					  $("#temp").val("");
+					  $("#tempctn").text(result.data.temp);
+					  $("#emojictn").text(result.data.emoji);
+					},
+					error: function() {
+						showMsg("系统异常",'danger');
+					}
+				});
+			}
+
+		});
+
+		$("#sendBtn").click(function() {
+		   let temp=$('#tempctn').text();
+		   if(temp==""||temp=="--"){
+              showMsg("温度不能为空",'danger');
+		   }else{
+           $.ajax({
+				url: "http://localhost:8100/sendDeviceMsg?temp="+temp,
+				type: "get",
+					success: function(result) {
+					  if(result.errcode=='0'){
+						showMsg(result.errmsg,'success');
+					  }else{
+					    showMsg(result.errmsg,'danger');
+					  }
+					  if(result.data){
+						  $("#tempctn").text(result.data.temp);
+						  $("#emojictn").text(result.data.emoji);
+					  }
+					  $("#temp").val("");
+					},
+					error: function(xhr, status, error) {
+						console.error("发送失败:", error);
+						showMsg("系统异常: " + error,'danger');
+					}
+				});
+			}
+
+		});
+	});
+</script>
+</body>
+</html>

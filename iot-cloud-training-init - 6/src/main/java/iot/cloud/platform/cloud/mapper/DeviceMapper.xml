@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="iot.cloud.platform.cloud.mapper.DeviceMapper">
+    <select id="getDeviceByUserId" resultType="iot.cloud.platform.cloud.entity.DeviceEntity">
+        SELECT * from device where user_id=#{userId} order by id desc
+    </select>
+
+    <select id="getDevice" resultType="iot.cloud.platform.cloud.entity.DeviceEntity">
+        SELECT * from device where user_id=#{userId} and iot_id=#{iotId} limit 1
+    </select>
+
+    <select id="getDeviceByIotId" resultType="iot.cloud.platform.cloud.entity.DeviceEntity">
+        SELECT * from device where iot_id=#{iotId} limit 1
+    </select>
+
+    <!-- 完善创建设备的插入SQL -->
+    <insert id="createDevice" parameterType="iot.cloud.platform.cloud.entity.DeviceEntity">
+        INSERT INTO device (
+        user_id,
+        iot_id,
+        dev_name,
+        dev_type,
+        status,
+        description,
+        dev_secret,
+        create_time
+        ) VALUES (
+        #{userId},
+        #{iotId},
+        #{devName},
+        #{devType},
+        #{status},
+        #{description},
+        #{devSecret},
+        #{createTime}
+        )
+    </insert>
+
+    <update id="updateDevice" parameterType="iot.cloud.platform.cloud.entity.DeviceEntity">
+        update device set dev_name=#{devName},dev_type=#{devType},status=#{status},description=#{description} where iot_id=#{iotId} and user_id=#{userId}
+    </update>
+</mapper>

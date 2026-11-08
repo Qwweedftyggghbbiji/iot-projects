@@ -1,0 +1,42 @@
+<link rel="stylesheet" type="text/css" href="static/fonts/fontawesome/css/font-awesome.min.css">
+<div class="bg-light">
+  <nav class="navbar navbar-expand-md navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand abs" href="/"><i class="fa fa-cloud" aria-hidden="true"></i> 物联网云平台</a>
+      <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="navbar-collapse collapse" id="collapseNavbar">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" target="_blank" href="/swagger-ui.html">开放API</a>
+          </li>
+        </ul>
+        <% if(session["SESSION_KEY_USERID"]==null) { %>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item" >
+            <a class="nav-link" href="/login" data-bs-target="#myModal" data-bs-toggle="modal">登录</a>
+          </li>
+        </ul>
+        <% } %>
+        <% if(session["SESSION_KEY_USERID"]!=null) { %>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">${session.SESSION_KEY_USERID}</a>
+            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarScrollingDropdown">
+              <li><a class="dropdown-item" href="/device_list">我的设备</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="/device_new">新增设备</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">退出</a>
+          </li>
+        </ul>
+        <% } %>
+      </div>
+    </div>
+  </nav>
+</div>

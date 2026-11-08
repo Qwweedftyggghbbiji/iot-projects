@@ -1,0 +1,27 @@
+server:
+  port: 8097
+
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/iotlock?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    username: iotlock
+    password: R5K5r9727@t
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  mapper-locations: classpath:iot/cloud/platform/lock/mapper/*.xml
+  type-aliases-package: iot.cloud.platform.lock.entity
+  configuration:
+    map-underscore-to-camel-case: true  # 开启驼峰命名映射（必须加）
+mqtt:
+  host: tcp://localhost:1883
+  username: iotweb
+  password: iotweb
+  qos: 1
+  client-id: lock001
+  topic:
+    post: /iot/cloud/devices/post
+    post_reply: /iot/cloud/devices/post_reply
+    receive: /iot/cloud/devices/receive
+    receive_reply: /iot/cloud/devices/receive_reply
